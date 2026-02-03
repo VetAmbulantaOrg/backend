@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Exam.App.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260201142109_InitialCreate")]
+    [Migration("20260203154252_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -164,10 +164,15 @@ namespace Exam.App.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("OwnerId")
+                        .HasColumnType("integer");
+
                     b.Property<int>("SpeciesId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("OwnerId");
 
                     b.HasIndex("SpeciesId");
 
@@ -328,11 +333,19 @@ namespace Exam.App.Migrations
 
             modelBuilder.Entity("Exam.App.Domain.Models.Patient", b =>
                 {
+                    b.HasOne("Exam.App.Domain.ApplicationUser", "Owner")
+                        .WithMany()
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Exam.App.Domain.Models.AnimalSpecies", "Species")
                         .WithMany()
                         .HasForeignKey("SpeciesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Owner");
 
                     b.Navigation("Species");
                 });

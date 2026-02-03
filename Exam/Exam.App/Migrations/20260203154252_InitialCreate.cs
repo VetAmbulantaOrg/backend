@@ -71,27 +71,6 @@ namespace Exam.App.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Patients",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    SpeciesId = table.Column<int>(type: "integer", nullable: false),
-                    DateOfBirth = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Patients", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Patients_AnimalSpecies_SpeciesId",
-                        column: x => x.SpeciesId,
-                        principalTable: "AnimalSpecies",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
@@ -197,6 +176,34 @@ namespace Exam.App.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Patients",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    SpeciesId = table.Column<int>(type: "integer", nullable: false),
+                    OwnerId = table.Column<int>(type: "integer", nullable: false),
+                    DateOfBirth = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Patients", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Patients_AnimalSpecies_SpeciesId",
+                        column: x => x.SpeciesId,
+                        principalTable: "AnimalSpecies",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Patients_AspNetUsers_OwnerId",
+                        column: x => x.OwnerId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.InsertData(
                 table: "AnimalSpecies",
                 columns: new[] { "Id", "Name" },
@@ -258,6 +265,11 @@ namespace Exam.App.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Patients_OwnerId",
+                table: "Patients",
+                column: "OwnerId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Patients_SpeciesId",
                 table: "Patients",
                 column: "SpeciesId");
@@ -288,10 +300,10 @@ namespace Exam.App.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "AnimalSpecies");
 
             migrationBuilder.DropTable(
-                name: "AnimalSpecies");
+                name: "AspNetUsers");
         }
     }
 }

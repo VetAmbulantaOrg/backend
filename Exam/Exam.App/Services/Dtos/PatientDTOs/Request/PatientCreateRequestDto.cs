@@ -6,6 +6,7 @@ namespace Exam.App.Services.Dtos.CageDTOs.Request
     {
         public string Name { get; set; }
         public int SpeciesId { get; set; }
+        public string OwnerUserName { get; set; }
         public DateTime DateOfBirth { get; set; }
     }
 }
