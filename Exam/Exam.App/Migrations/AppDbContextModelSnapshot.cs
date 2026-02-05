@@ -167,11 +167,16 @@ namespace Exam.App.Migrations
                     b.Property<int>("SpeciesId")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("VetId")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
                     b.HasIndex("OwnerId");
 
                     b.HasIndex("SpeciesId");
+
+                    b.HasIndex("VetId");
 
                     b.ToTable("Patients");
                 });
@@ -342,9 +347,15 @@ namespace Exam.App.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Exam.App.Domain.ApplicationUser", "Vet")
+                        .WithMany()
+                        .HasForeignKey("VetId");
+
                     b.Navigation("Owner");
 
                     b.Navigation("Species");
+
+                    b.Navigation("Vet");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>

@@ -185,6 +185,7 @@ namespace Exam.App.Migrations
                     Name = table.Column<string>(type: "text", nullable: false),
                     SpeciesId = table.Column<int>(type: "integer", nullable: false),
                     OwnerId = table.Column<int>(type: "integer", nullable: false),
+                    VetId = table.Column<int>(type: "integer", nullable: true),
                     DateOfBirth = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
@@ -202,6 +203,11 @@ namespace Exam.App.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Patients_AspNetUsers_VetId",
+                        column: x => x.VetId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.InsertData(
@@ -273,6 +279,11 @@ namespace Exam.App.Migrations
                 name: "IX_Patients_SpeciesId",
                 table: "Patients",
                 column: "SpeciesId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Patients_VetId",
+                table: "Patients",
+                column: "VetId");
         }
 
         /// <inheritdoc />

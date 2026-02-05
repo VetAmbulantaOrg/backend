@@ -1,5 +1,6 @@
 ﻿using Exam.App.Services;
 using Exam.App.Services.Dtos.CageDTOs.Request;
+using Exam.App.Services.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -33,7 +34,7 @@ namespace Exam.App.Controllers
             return Ok(result);
         }
 
-        [Authorize(Roles = "Veterinar")]
+        [Authorize(Roles = "Veterinar,Pomocnik")]
         [HttpPost]
 
         public async Task<IActionResult> AddCage(PatientCreateRequestDto patientDto)
@@ -42,15 +43,31 @@ namespace Exam.App.Controllers
             return Ok(result);
         }
 
-        [Authorize(Roles = "Veterinar")]
+        [Authorize(Roles = "Veterinar,Pomocnik")]
         [HttpPut]
-        public async Task<IActionResult> UpdateAnimal(PatientUpdateRequestDto patientDto)
+        public async Task<IActionResult> UpdatePatient(PatientUpdateRequestDto patientDto)
         {
-            var result = await _patientService.UpdateAsync(patientDto);
-            return Ok(result);
+            try
+            {
+                var result = await _patientService.UpdateAsync(patientDto);
+                return Ok(result);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message); // 🚨 ovde vraćaš poruku
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Došlo je do greške prilikom izmene pacijenta.");
+            }
         }
 
-        [Authorize(Roles = "Veterinar")]
+
+        [Authorize(Roles = "Veterinar,Pomocnik")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAnimal(int id)
         {

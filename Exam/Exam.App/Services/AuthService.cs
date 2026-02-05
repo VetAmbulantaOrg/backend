@@ -68,6 +68,7 @@ public class AuthService : IAuthService
         var claims = new List<Claim>
         {
             new(JwtRegisteredClaimNames.Sub, user.UserName),
+            new("Id", user.Id.ToString()),
             new("Username", user.UserName),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };

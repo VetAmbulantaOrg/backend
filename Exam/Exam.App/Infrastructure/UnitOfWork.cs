@@ -1,6 +1,8 @@
-﻿using Exam.App.Domain.Interface;
+﻿using Exam.App.Domain;
+using Exam.App.Domain.Interface;
 using Exam.App.Infrastructure.Database;
 using Exam.App.Infrastructure.Database.Repositories;
+using Microsoft.AspNetCore.Identity;
 
 namespace Exam.App.Infrastructure
 {

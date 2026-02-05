@@ -73,6 +73,15 @@ namespace Exam.App.Services
                         throw new NotFoundException(patientDto.SpeciesId);
                 }
 
+               var owner = await _userManager.FindByNameAsync(patientDto.OwnerUserName);
+
+                if (owner == null) {
+
+                    throw new OwnerNotFound(patientDto.OwnerUserName);
+                }
+
+                patient.Owner = owner;
+
                 patient.SpeciesId = patientDto.SpeciesId;
 
                 await _unitOfWork.PatientRepository.AddAsync(patient);
@@ -92,7 +101,7 @@ namespace Exam.App.Services
         {
             try
             {
-                var patient = await _unitOfWork.PatientRepository.GetOneAsync(patientDto.Id);
+                var patient = await _unitOfWork.PatientRepository.GetOne(patientDto.Id);
 
                 if (patient == null)
                     throw new NotFoundException(patientDto.Id);
@@ -106,12 +115,17 @@ namespace Exam.App.Services
                     if (species == null)
 
                         throw new NotFoundException(patientDto.SpeciesId);
-
-                    // 🚨 Provera: da li je životinja već u tom kavezu
-                    if (patient.SpeciesId == patientDto.SpeciesId)
-                        throw new InvalidOperationException(
-                            $"Za pacijenta sa ID {patient.Id} je već postavljena vrsta {species.Name}.");
                 }
+
+                var vet = await _userManager.FindByIdAsync(patientDto.VetId.ToString());
+                
+                if (vet == null)
+                {
+
+                    throw new NotFoundException(patientDto.VetId);
+                }
+
+                patient.Vet = vet;
 
                 _mapper.Map(patientDto, patient);
 

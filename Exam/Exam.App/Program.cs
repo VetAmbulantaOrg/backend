@@ -29,6 +29,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IAnimalService, AnimalService>();
 builder.Services.AddScoped<IPatientService, PatientService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 
 

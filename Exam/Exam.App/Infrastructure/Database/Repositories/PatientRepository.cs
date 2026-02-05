@@ -20,6 +20,7 @@ namespace Exam.App.Infrastructure.Database.Repositories
             return await _dbContext.Patients
                 .Include(p => p.Species)
                 .Include(p => p.Owner)
+                .Include(p => p.Vet)
                 .ToListAsync();
         }
 
@@ -28,6 +29,7 @@ namespace Exam.App.Infrastructure.Database.Repositories
             return await _dbContext.Patients
                 .Include(p => p.Species)
                 .Include(p => p.Owner)
+                .Include(p => p.Vet)
                 .FirstOrDefaultAsync(p => p.Id == Id);
         }
 
