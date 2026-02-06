@@ -1,4 +1,5 @@
 ﻿using Exam.App.Domain.Models;
+using Exam.App.Services.Dtos.PatientDTOs.Request;
 
 namespace Exam.App.Domain.Interface
 {
@@ -6,5 +7,6 @@ namespace Exam.App.Domain.Interface
     {
         Task<List<Patient>> GetAll();
         Task<Patient> GetOne(int Id);
+        Task<List<Patient>> SearchPatientDetailsAsync(PatientSearchDto search);
     }
 }

@@ -1,9 +1,10 @@
 ﻿using Exam.App.Domain;
+using Exam.App.Domain.Models;
 
 namespace Exam.App.Services
 {
     public interface IUserService
     {
-        Task<IList<ApplicationUser>> GetAllVetsAsync();
+        Task<IList<Vet>> GetAllVetsAsync();
     }
 }

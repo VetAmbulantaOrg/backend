@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Exam.App.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260205154429_InitialCreate")]
+    [Migration("20260206145902_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -39,6 +39,11 @@ namespace Exam.App.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("text");
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(21)
+                        .HasColumnType("character varying(21)");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -98,6 +103,10 @@ namespace Exam.App.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasDiscriminator().HasValue("ApplicationUser");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Exam.App.Domain.Models.AnimalSpecies", b =>
@@ -336,23 +345,31 @@ namespace Exam.App.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Exam.App.Domain.Models.Vet", b =>
+                {
+                    b.HasBaseType("Exam.App.Domain.ApplicationUser");
+
+                    b.HasDiscriminator().HasValue("Vet");
+                });
+
             modelBuilder.Entity("Exam.App.Domain.Models.Patient", b =>
                 {
                     b.HasOne("Exam.App.Domain.ApplicationUser", "Owner")
                         .WithMany()
                         .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Exam.App.Domain.Models.AnimalSpecies", "Species")
                         .WithMany()
                         .HasForeignKey("SpeciesId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Exam.App.Domain.ApplicationUser", "Vet")
-                        .WithMany()
-                        .HasForeignKey("VetId");
+                    b.HasOne("Exam.App.Domain.Models.Vet", "Vet")
+                        .WithMany("Patients")
+                        .HasForeignKey("VetId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Owner");
 
@@ -410,6 +427,11 @@ namespace Exam.App.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Exam.App.Domain.Models.Vet", b =>
+                {
+                    b.Navigation("Patients");
                 });
 #pragma warning restore 612, 618
         }

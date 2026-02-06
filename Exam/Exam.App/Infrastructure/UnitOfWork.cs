@@ -11,11 +11,13 @@ namespace Exam.App.Infrastructure
         private readonly AppDbContext _dbContext;
         public IAnimalRepository AnimalRepository { get; set; }
         public IPatientRepository PatientRepository { get; set; }
+        public IVetRepository VetRepository { get; set; }
         public UnitOfWork(AppDbContext dbContext)
         {
             _dbContext = dbContext;
             AnimalRepository = new AnimalRepository(dbContext);
             PatientRepository = new PatientRepository(dbContext);
+            VetRepository = new VetRepository(dbContext);
 
         }
 

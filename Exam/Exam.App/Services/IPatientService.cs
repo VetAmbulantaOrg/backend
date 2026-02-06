@@ -6,6 +6,7 @@ using Exam.App.Services.Dtos.AnimalDTOs.Request;
 using Exam.App.Services.Dtos.AnimalDTOs.Response;
 using Exam.App.Services.Dtos.CageDTOs.Request;
 using Exam.App.Services.Dtos.CageDTOs.Response;
+using Exam.App.Services.Dtos.PatientDTOs.Request;
 using Exam.App.Services.Exceptions;
 using Microsoft.AspNetCore.Identity;
 
@@ -13,6 +14,7 @@ namespace Exam.App.Services
 {
     public interface IPatientService
     {
+        Task<List<PatientResponseDto>> SearchPatientDetailsAsync(PatientSearchDto search);
         Task<IEnumerable<PatientResponseDto>> GetAllAsync();
         Task<PatientResponseDto> GetOneById(int id);
         Task<PatientResponseDto> AddAsync(PatientCreateRequestDto cageDto);

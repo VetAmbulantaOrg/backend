@@ -6,6 +6,7 @@ using Exam.App.Services.Dtos.AnimalDTOs.Request;
 using Exam.App.Services.Dtos.AnimalDTOs.Response;
 using Exam.App.Services.Dtos.CageDTOs.Request;
 using Exam.App.Services.Dtos.CageDTOs.Response;
+using Exam.App.Services.Dtos.PatientDTOs.Request;
 using Exam.App.Services.Exceptions;
 using Microsoft.AspNetCore.Identity;
 
@@ -23,6 +24,19 @@ namespace Exam.App.Services
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _userManager = userManager;
+        }
+
+        public async Task<List<PatientResponseDto>> SearchPatientDetailsAsync(PatientSearchDto search)
+        {
+            try
+            {
+                var result = await _unitOfWork.PatientRepository.SearchPatientDetailsAsync(search);
+                return _mapper.Map<List<PatientResponseDto>>(result.ToList());
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("Došlo je do greške prilikom dobavljanja pacijenata.", ex);
+            }
         }
 
         public async Task<IEnumerable<PatientResponseDto>> GetAllAsync()
@@ -117,7 +131,7 @@ namespace Exam.App.Services
                         throw new NotFoundException(patientDto.SpeciesId);
                 }
 
-                var vet = await _userManager.FindByIdAsync(patientDto.VetId.ToString());
+                var vet = await _unitOfWork.VetRepository.GetOneAsync(patientDto.VetId);
                 
                 if (vet == null)
                 {

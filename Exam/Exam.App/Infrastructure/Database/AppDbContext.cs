@@ -13,6 +13,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<int>
 
     public DbSet<AnimalSpecies> AnimalSpecies { get; set; }
     public DbSet<Patient> Patients { get; set; }
+    public DbSet<Vet> Vets { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -40,7 +41,14 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<int>
             );
         });
 
+        // Patient → Species (1:N)
+        modelBuilder.Entity<Patient>().HasOne(p => p.Species).WithMany().HasForeignKey(p => p.SpeciesId).OnDelete(DeleteBehavior.Restrict);
 
+        // Patient → Owner (1:N, ApplicationUser)
+        modelBuilder.Entity<Patient>().HasOne(p => p.Owner).WithMany().HasForeignKey(p => p.OwnerId).OnDelete(DeleteBehavior.Restrict);
+
+        // Patient → Vet (1:N, Vet nasleđuje ApplicationUser)
+        modelBuilder.Entity<Patient>().HasOne(p => p.Vet).WithMany(v => v.Patients).HasForeignKey(p => p.VetId).OnDelete(DeleteBehavior.SetNull);
 
     }
 }

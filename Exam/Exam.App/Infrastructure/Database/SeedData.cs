@@ -1,4 +1,5 @@
 ﻿using Exam.App.Domain;
+using Exam.App.Domain.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace Exam.App.Infrastructure.Database;
@@ -9,7 +10,7 @@ public static class SeedData
     {
         var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
-        var admin1 = new ApplicationUser
+        var admin1 = new Vet
         {
             UserName = "john",
             Email = "john.doe@example.com",
@@ -25,7 +26,7 @@ public static class SeedData
             await userManager.AddToRoleAsync(admin1, "Veterinar");
         }
 
-        var admin2 = new ApplicationUser
+        var admin2 = new Vet
         {
             UserName = "jane",
             Email = "jane.doe@example.com",

@@ -1,5 +1,6 @@
 ﻿using Exam.App.Services;
 using Exam.App.Services.Dtos.CageDTOs.Request;
+using Exam.App.Services.Dtos.PatientDTOs.Request;
 using Exam.App.Services.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -22,6 +23,15 @@ namespace Exam.App.Controllers
         public async Task<IActionResult> GetAllAsync()
         {
             var result = await _patientService.GetAllAsync();
+
+            return Ok(result);
+        }
+
+
+        [HttpGet("search")]
+        public async Task<IActionResult> GetBySearch(PatientSearchDto searchDto)
+        {
+            var result = await _patientService.SearchPatientDetailsAsync(searchDto);
 
             return Ok(result);
         }

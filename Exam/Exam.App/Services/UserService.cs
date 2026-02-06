@@ -1,5 +1,6 @@
 ﻿using Exam.App.Domain;
 using Exam.App.Domain.Interface;
+using Exam.App.Domain.Models;
 using Exam.App.Services.Dtos.CageDTOs.Response;
 using Microsoft.AspNetCore.Identity;
 
@@ -16,9 +17,10 @@ namespace Exam.App.Services
             _userManager = userManager;
         }
 
-        public async Task<IList<ApplicationUser>> GetAllVetsAsync()
+        public async Task<IList<Vet>> GetAllVetsAsync()
         {
-            return await _userManager.GetUsersInRoleAsync("Veterinar");
+            var vets = await _unitOfWork.VetRepository.GetAllAsync();
+            return vets.ToList();
         }
 
     }
