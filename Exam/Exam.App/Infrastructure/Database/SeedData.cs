@@ -1,6 +1,7 @@
 ﻿using Exam.App.Domain;
 using Exam.App.Domain.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Exam.App.Infrastructure.Database;
 
@@ -9,6 +10,7 @@ public static class SeedData
     public static async Task InitializeAsync(IServiceProvider serviceProvider)
     {
         var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+        var context = serviceProvider.GetRequiredService<AppDbContext>();
 
         var admin1 = new Vet
         {
@@ -61,5 +63,41 @@ public static class SeedData
 
 
 
+        // --- Pacijenti ---
+        if (!await context.Patients.AnyAsync())
+        {
+
+            context.Patients.AddRange(
+                new Patient
+                {
+                    Name = "Rex",
+                    SpeciesId = 1,
+                    OwnerId = 3,
+                    VetId = 1,
+                    DateOfBirth = new DateTime(2015, 5, 12, 0, 0, 0, DateTimeKind.Utc)
+                },
+                new Patient
+                {
+                    Name = "Mica",
+                    SpeciesId = 2,
+                    OwnerId = 3,
+                    VetId = 2,
+                    DateOfBirth = new DateTime(2021, 8, 3, 0, 0, 0, DateTimeKind.Utc)
+                },
+                new Patient
+                {
+                    Name = "Kiki",
+                    SpeciesId = 3,
+                    OwnerId = 3,
+                    VetId = 1,
+                    DateOfBirth = new DateTime(2017, 2, 20, 0, 0, 0, DateTimeKind.Utc)
+                }
+            );
+
+            await context.SaveChangesAsync();
+        }
+
     }
 }
+
+

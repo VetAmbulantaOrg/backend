@@ -28,13 +28,13 @@ namespace Exam.App.Controllers
         }
 
 
-        [HttpGet("search")]
-        public async Task<IActionResult> GetBySearch(PatientSearchDto searchDto)
+        [HttpPost("search")]
+        public async Task<IActionResult> GetBySearch([FromBody] PatientSearchDto searchDto , int page = 1, int pageSize = 10)
         {
-            var result = await _patientService.SearchPatientDetailsAsync(searchDto);
-
+            var result = await _patientService.SearchPatientDetailsAsync(searchDto, page, pageSize);
             return Ok(result);
         }
+
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetOneByIdAsync(int id)

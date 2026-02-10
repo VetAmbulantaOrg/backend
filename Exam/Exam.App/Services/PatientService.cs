@@ -2,6 +2,8 @@
 using Exam.App.Domain;
 using Exam.App.Domain.Interface;
 using Exam.App.Domain.Models;
+using Exam.App.Infrastructure.Database.Repositories;
+using Exam.App.Services.Dtos;
 using Exam.App.Services.Dtos.AnimalDTOs.Request;
 using Exam.App.Services.Dtos.AnimalDTOs.Response;
 using Exam.App.Services.Dtos.CageDTOs.Request;
@@ -26,18 +28,34 @@ namespace Exam.App.Services
             _userManager = userManager;
         }
 
-        public async Task<List<PatientResponseDto>> SearchPatientDetailsAsync(PatientSearchDto search)
+        public async Task<PagedResultDto<PatientResponseDto>> SearchPatientDetailsAsync(PatientSearchDto searchDto, int page, int pageSize)
         {
             try
             {
-                var result = await _unitOfWork.PatientRepository.SearchPatientDetailsAsync(search);
-                return _mapper.Map<List<PatientResponseDto>>(result.ToList());
+                var query = await _unitOfWork.PatientRepository.SearchPatientDetailsAsync(searchDto);
+
+                var totalCount = query.Count;
+                var patients = query
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToList();
+
+                var dto = _mapper.Map<List<PatientResponseDto>>(patients);
+
+                return new PagedResultDto<PatientResponseDto>
+                {
+                    Items = dto,
+                    TotalCount = totalCount,
+                    Page = page,
+                    PageSize = pageSize
+                };
             }
             catch (Exception ex)
             {
                 throw new ApplicationException("Došlo je do greške prilikom dobavljanja pacijenata.", ex);
             }
         }
+
 
         public async Task<IEnumerable<PatientResponseDto>> GetAllAsync()
         {

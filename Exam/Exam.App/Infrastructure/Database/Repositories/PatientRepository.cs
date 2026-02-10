@@ -45,20 +45,30 @@ namespace Exam.App.Infrastructure.Database.Repositories
                                          p.Species.Name.ToLower().Contains(search.Species.ToLower()));
 
 
+            var today = DateTime.UtcNow.Date;
+
+
             if (search.MinAge.HasValue && search.MaxAge.HasValue)
             {
+                var maxDob = today.AddYears(-search.MinAge.Value); // najstariji dozvoljeni datum rođenja
+                var minDob = today.AddYears(-search.MaxAge.Value); // najmlađi dozvoljeni datum rođenja
+
                 query = query.Where(p =>
-                    CalculateAge(p.DateOfBirth) >= search.MinAge.Value &&
-                    CalculateAge(p.DateOfBirth) <= search.MaxAge.Value);
+                    p.DateOfBirth <= maxDob && // pacijent mora biti stariji od MinAge
+                    p.DateOfBirth >= minDob    // pacijent mora biti mlađi od MaxAge
+                );
             }
             else if (search.MinAge.HasValue) // samo od
             {
-                query = query.Where(p => CalculateAge(p.DateOfBirth) >= search.MinAge.Value);
+                var maxDob = today.AddYears(-search.MinAge.Value);
+                query = query.Where(p => p.DateOfBirth <= maxDob);
             }
             else if (search.MaxAge.HasValue) // samo do
             {
-                query = query.Where(p => CalculateAge(p.DateOfBirth) <= search.MaxAge.Value);
+                var minDob = today.AddYears(-search.MaxAge.Value);
+                query = query.Where(p => p.DateOfBirth >= minDob);
             }
+
 
 
 
@@ -72,6 +82,8 @@ namespace Exam.App.Infrastructure.Database.Repositories
                     "SpeciesDesc" => query.OrderByDescending(p => p.Species),
                     "VetAsc" => query.OrderBy(p => p.Vet.Name),
                     "VetDesc" => query.OrderByDescending(p => p.Vet.Name),
+                    "AgeAsc" => query.OrderBy(p => p.DateOfBirth),
+                    "AgeDesc" => query.OrderByDescending(p => p.DateOfBirth),
                     _ => query.OrderBy(p => p.Name)
                 };
             }
@@ -96,16 +108,5 @@ namespace Exam.App.Infrastructure.Database.Repositories
                 .Include(p => p.Vet)
                 .FirstOrDefaultAsync(p => p.Id == Id);
         }
-
-
-        private static int CalculateAge(DateTime dob)
-        {
-            var today = DateTime.Today;
-            var age = today.Year - dob.Year;
-            if (dob.Date > today.AddYears(-age)) age--;
-            return age;
-        }
-
-
     }
 }

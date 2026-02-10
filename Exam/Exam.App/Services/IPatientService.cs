@@ -2,6 +2,7 @@
 using Exam.App.Domain;
 using Exam.App.Domain.Interface;
 using Exam.App.Domain.Models;
+using Exam.App.Services.Dtos;
 using Exam.App.Services.Dtos.AnimalDTOs.Request;
 using Exam.App.Services.Dtos.AnimalDTOs.Response;
 using Exam.App.Services.Dtos.CageDTOs.Request;
@@ -14,7 +15,7 @@ namespace Exam.App.Services
 {
     public interface IPatientService
     {
-        Task<List<PatientResponseDto>> SearchPatientDetailsAsync(PatientSearchDto search);
+        Task<PagedResultDto<PatientResponseDto>> SearchPatientDetailsAsync(PatientSearchDto searchDto, int page, int pageSize);
         Task<IEnumerable<PatientResponseDto>> GetAllAsync();
         Task<PatientResponseDto> GetOneById(int id);
         Task<PatientResponseDto> AddAsync(PatientCreateRequestDto cageDto);

@@ -41,6 +41,8 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<int>
             );
         });
 
+
+
         // Patient → Species (1:N)
         modelBuilder.Entity<Patient>().HasOne(p => p.Species).WithMany().HasForeignKey(p => p.SpeciesId).OnDelete(DeleteBehavior.Restrict);
 
