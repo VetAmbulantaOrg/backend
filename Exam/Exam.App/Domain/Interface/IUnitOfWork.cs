@@ -5,6 +5,7 @@
         IAnimalRepository AnimalRepository { get; set; }
         IPatientRepository PatientRepository { get; set; }
         IVetRepository VetRepository { get; set; }
+        IAppointmentRepository AppointmentRepository { get; set; }
         Task<int> CompleteAsync();
     }
 }

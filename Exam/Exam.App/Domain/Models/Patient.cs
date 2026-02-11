@@ -13,5 +13,6 @@ namespace Exam.App.Domain.Models
         public int? VetId { get; set; }
         public Vet? Vet { get; set; }
         public DateTime DateOfBirth { get; set; }
+        public ICollection<Appointment> Appointments { get; set; }
     }
 }

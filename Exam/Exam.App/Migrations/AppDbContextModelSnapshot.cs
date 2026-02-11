@@ -155,6 +155,38 @@ namespace Exam.App.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Exam.App.Domain.Models.Appointment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("DurationMinutes")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PatientId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("StartAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("VetId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PatientId");
+
+                    b.HasIndex("VetId");
+
+                    b.ToTable("Appointments");
+                });
+
             modelBuilder.Entity("Exam.App.Domain.Models.Patient", b =>
                 {
                     b.Property<int>("Id")
@@ -349,18 +381,37 @@ namespace Exam.App.Migrations
                     b.HasDiscriminator().HasValue("Vet");
                 });
 
+            modelBuilder.Entity("Exam.App.Domain.Models.Appointment", b =>
+                {
+                    b.HasOne("Exam.App.Domain.Models.Patient", "Patient")
+                        .WithMany("Appointments")
+                        .HasForeignKey("PatientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Exam.App.Domain.Models.Vet", "Vet")
+                        .WithMany("Appointments")
+                        .HasForeignKey("VetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Patient");
+
+                    b.Navigation("Vet");
+                });
+
             modelBuilder.Entity("Exam.App.Domain.Models.Patient", b =>
                 {
                     b.HasOne("Exam.App.Domain.ApplicationUser", "Owner")
                         .WithMany()
                         .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Exam.App.Domain.Models.AnimalSpecies", "Species")
                         .WithMany()
                         .HasForeignKey("SpeciesId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.SetNull)
                         .IsRequired();
 
                     b.HasOne("Exam.App.Domain.Models.Vet", "Vet")
@@ -426,8 +477,15 @@ namespace Exam.App.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Exam.App.Domain.Models.Patient", b =>
+                {
+                    b.Navigation("Appointments");
+                });
+
             modelBuilder.Entity("Exam.App.Domain.Models.Vet", b =>
                 {
+                    b.Navigation("Appointments");
+
                     b.Navigation("Patients");
                 });
 #pragma warning restore 612, 618
