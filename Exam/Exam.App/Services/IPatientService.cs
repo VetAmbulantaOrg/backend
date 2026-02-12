@@ -17,6 +17,7 @@ namespace Exam.App.Services
     {
         Task<PagedResultDto<PatientResponseDto>> SearchPatientDetailsAsync(PatientSearchDto searchDto, int page, int pageSize);
         Task<IEnumerable<PatientResponseDto>> GetAllAsync();
+        Task<List<PatientResponseDto>> GetByVet(int VetId);
         Task<PatientResponseDto> GetOneById(int id);
         Task<PatientResponseDto> AddAsync(PatientCreateRequestDto cageDto);
         Task<PatientResponseDto> UpdateAsync(PatientUpdateRequestDto cageDto);

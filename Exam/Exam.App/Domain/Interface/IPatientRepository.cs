@@ -8,5 +8,6 @@ namespace Exam.App.Domain.Interface
         Task<List<Patient>> GetAll();
         Task<Patient> GetOne(int Id);
         Task<List<Patient>> SearchPatientDetailsAsync(PatientSearchDto search);
+        Task<List<Patient>> GetByVet(int VetId);
     }
 }

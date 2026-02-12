@@ -25,7 +25,7 @@ namespace Exam.App.Services.Mappers
             CreateMap<PatientUpdateRequestDto, Patient>();
             CreateMap<Patient,PatientResponseDto>();
             CreateMap<Patient,PatientSummaryDto>()
-            .ForMember(d => d.Species, opt => opt.MapFrom(s => s.Species))
+            .ForMember(d => d.Species, opt => opt.MapFrom(s => s.Species.Name))
             .ForMember(dest => dest.Age, opt => opt.MapFrom(src =>
                 DateTime.Today.Year - src.DateOfBirth.Year -
                 (DateTime.Today.DayOfYear < src.DateOfBirth.DayOfYear ? 1 : 0)

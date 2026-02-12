@@ -63,6 +63,12 @@ namespace Exam.App.Services
             return _mapper.Map<List<PatientResponseDto>>(patients.ToList());
         }
 
+        public async Task<List<PatientResponseDto>> GetByVet(int VetId)
+        {
+            var patients = await _unitOfWork.PatientRepository.GetByVet(VetId);
+            return _mapper.Map<List<PatientResponseDto>>(patients.ToList());
+        }
+
 
         public async Task<PatientResponseDto> GetOneById(int id)
         {

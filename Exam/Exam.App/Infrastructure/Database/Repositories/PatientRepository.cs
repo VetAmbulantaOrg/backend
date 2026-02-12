@@ -108,5 +108,15 @@ namespace Exam.App.Infrastructure.Database.Repositories
                 .Include(p => p.Vet)
                 .FirstOrDefaultAsync(p => p.Id == Id);
         }
+
+        public async Task<List<Patient>> GetByVet(int VetId)
+        {
+            return await _dbContext.Patients
+                .Include(p => p.Species)
+                .Include(p => p.Owner)
+                .Include(p => p.Vet)
+                .Where(p => p.VetId == VetId)
+                .ToListAsync();
+        }
     }
 }

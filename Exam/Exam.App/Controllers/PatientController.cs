@@ -27,6 +27,13 @@ namespace Exam.App.Controllers
             return Ok(result);
         }
 
+        [HttpGet("getByVet")]
+        public async Task<IActionResult> GetByVetAsync(int vetId)
+        {
+            var result = await _patientService.GetByVet(vetId);
+
+            return Ok(result);
+        }
 
         [HttpPost("search")]
         public async Task<IActionResult> GetBySearch([FromBody] PatientSearchDto searchDto , int page = 1, int pageSize = 10)

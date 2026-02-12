@@ -21,6 +21,7 @@ namespace Exam.App.Infrastructure.Database.Repositories
             return await _dbContext.Appointments
                 .AsNoTracking()
                 .Include(a => a.Patient)
+                .Include(a => a.Patient.Species)
                 .Where(a => a.VetId == vetId
                             && a.StartAt >= from
                             && a.StartAt <= to

@@ -25,7 +25,7 @@ namespace Exam.App.Services
         public async Task<List<AppointmentsByDayDto>> GetAppointmentsForCurrentMonthAsync(int vetId)
         {
             var today = DateTime.UtcNow.Date; // ili DateTime.Now ako radiš u lokalnom vremenu
-            var from = new DateTime(today.Year, today.Month, 1);
+            var from = new DateTime(today.Year, today.Month, 1).ToUniversalTime();
             var to = from.AddMonths(1).AddDays(-1);
 
             return await GetUpcomingAppointmentsGroupedByDayAsync(vetId, from, to);
@@ -35,6 +35,7 @@ namespace Exam.App.Services
         public async Task<List<AppointmentsByDayDto>> GetUpcomingAppointmentsGroupedByDayAsync(int vetId, DateTime from, DateTime to)
         {
             var appointments = await _unitOfWork.AppointmentRepository.GetUpcomingAppointmentsAsync(vetId, from, to);
+
 
             var mapped = _mapper.Map<List<AppointmentSummaryDto>>(appointments);
 
