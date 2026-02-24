@@ -24,8 +24,7 @@ namespace Exam.App.Infrastructure.Database.Repositories
                 .Include(a => a.Patient.Species)
                 .Where(a => a.VetId == vetId
                             && a.StartAt >= from
-                            && a.StartAt <= to
-                            && a.Status == AppointmentStatus.Scheduled)
+                            && a.StartAt <= to)
                 .OrderBy(a => a.StartAt)
                 .ToListAsync();
         }

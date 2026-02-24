@@ -7,6 +7,7 @@ using Exam.App.Infrastructure.Database.Repositories;
 using Exam.App.Services;
 using Exam.App.Services.Dtos.AppointmentDTOs.Request;
 using Exam.App.Services.Dtos.AppointmentDTOs.Response;
+using Exam.App.Services.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Exam.App.Services
@@ -91,6 +92,30 @@ namespace Exam.App.Services
             // 6. Vraćanje odgovora
             return _mapper.Map<AppointmentSummaryDto>(appointment);
         }
+
+        public async Task<AppointmentSummaryDto> CancelAppointmentAsync(CancelAppointmentDto dto)
+        {
+            var appointment = await _unitOfWork.AppointmentRepository.GetOneAsync(dto.VetId);
+            if (appointment == null)
+            {
+                throw new NotFoundException(dto.VetId);
+            }
+
+            if (appointment.VetId != dto.VetId)
+            {
+                throw new UnauthorizedAccessException("Veterinar može otkazati samo svoje termine.");
+            }
+
+            appointment.Status = 0;
+            appointment.CancellationReason = dto.Reason;
+
+            _unitOfWork.AppointmentRepository.Update(appointment);
+
+            await _unitOfWork.CompleteAsync();
+
+            return _mapper.Map<AppointmentSummaryDto>(appointment);
+        }
+
     }
 }
 

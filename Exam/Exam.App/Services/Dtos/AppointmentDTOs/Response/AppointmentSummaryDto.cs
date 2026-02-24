@@ -7,6 +7,8 @@ namespace Exam.App.Services.Dtos.AppointmentDTOs.Response
         public int Id { get; set; }
         public DateTime StartAt { get; set; }
         public int DurationMinutes { get; set; }
+        public string Status { get; set; }
+        public string? CancellationReason { get; set; }
         public PatientSummaryDto Patient { get; set; }
     }
 

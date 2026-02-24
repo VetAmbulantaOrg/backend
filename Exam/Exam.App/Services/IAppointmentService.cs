@@ -8,5 +8,6 @@ namespace Exam.App.Services
         Task<List<AppointmentsByDayDto>> GetUpcomingAppointmentsGroupedByDayAsync(int vetId, DateTime from, DateTime to);
         Task<List<AppointmentsByDayDto>> GetAppointmentsForCurrentMonthAsync(int vetId);
         Task<AppointmentSummaryDto> CreateAppointmentAsync(CreateAppointmentDto dto);
+        Task<AppointmentSummaryDto> CancelAppointmentAsync(CancelAppointmentDto dto);
     }
 }

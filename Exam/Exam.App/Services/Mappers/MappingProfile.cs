@@ -32,7 +32,8 @@ namespace Exam.App.Services.Mappers
             ));
 
             CreateMap<Appointment, AppointmentSummaryDto>()
-                .ForMember(d => d.Patient, opt => opt.MapFrom(s => s.Patient));
+                .ForMember(d => d.Patient, opt => opt.MapFrom(s => s.Patient))
+                .ForMember(d => d.Status, opt => opt.MapFrom(s => s.Status.ToString()));
 
             CreateMap<CreateAppointmentDto, Appointment>()
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status != default ? src.Status : AppointmentStatus.Scheduled));

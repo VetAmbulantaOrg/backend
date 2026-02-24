@@ -163,6 +163,9 @@ namespace Exam.App.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("CancellationReason")
+                        .HasColumnType("text");
+
                     b.Property<int>("DurationMinutes")
                         .HasColumnType("integer");
 
