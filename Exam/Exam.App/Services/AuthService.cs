@@ -70,6 +70,8 @@ public class AuthService : IAuthService
             new(JwtRegisteredClaimNames.Sub, user.UserName),
             new("Id", user.Id.ToString()),
             new("Username", user.UserName),
+            new("Name", user.Name),
+            new("Surname", user.Surname),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 
