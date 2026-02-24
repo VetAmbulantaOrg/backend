@@ -54,6 +54,12 @@ namespace Exam.App.Services
 
         public async Task<AppointmentSummaryDto> CreateAppointmentAsync(CreateAppointmentDto dto)
         {
+            // 0. Validacija da termin mora biti u budućnosti
+            if (dto.StartAt <= DateTime.UtcNow) 
+            { 
+                throw new InvalidOperationException("Pregled se mora zakazati u budućem vremenu."); 
+            }
+
             // 1. Validacija dostupnosti veterinara
             var vetAvailable = await _unitOfWork.AppointmentRepository.IsVetAvailableAsync(dto.VetId, dto.StartAt, dto.DurationMinutes);
 
