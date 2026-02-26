@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using Exam.App.Services;
 using Exam.App.Services.Dtos.AppointmentDTOs.Request;
+using Exam.App.Services.Dtos.ReportDTO_s.Request;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -53,6 +54,21 @@ namespace Exam.App.Controllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "Veterinar")]
+        [HttpPost("report")]
+        public async Task<IActionResult> CreateAppointmentReport([FromBody] AppointmentReportDto dto)
+        {
+            var result = await _appointmentService.SubmitReportAsync(dto);
+            return Ok(result);
+        }
+
+        [Authorize(Roles = "Veterinar")]
+        [HttpPut("report/update")]
+        public async Task<IActionResult> UpdateAppointmentReport([FromBody] AppointmentReportDto dto)
+        {
+            var result = await _appointmentService.UpdateReportAsync(dto);
+            return Ok(result);
+        }
     }
 
 }

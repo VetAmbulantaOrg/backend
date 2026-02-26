@@ -1,4 +1,5 @@
-﻿using Exam.App.Services.Dtos.PatientDTOs.Response;
+﻿using Exam.App.Domain.Models;
+using Exam.App.Services.Dtos.PatientDTOs.Response;
 
 namespace Exam.App.Services.Dtos.AppointmentDTOs.Response
 {
@@ -10,6 +11,7 @@ namespace Exam.App.Services.Dtos.AppointmentDTOs.Response
         public string Status { get; set; }
         public string? CancellationReason { get; set; }
         public PatientSummaryDto Patient { get; set; }
+        public Report? Report { get; set; }
     }
 
 }

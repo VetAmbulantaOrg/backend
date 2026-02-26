@@ -13,6 +13,7 @@ namespace Exam.App.Infrastructure
         public IPatientRepository PatientRepository { get; set; }
         public IVetRepository VetRepository { get; set; }
         public IAppointmentRepository AppointmentRepository { get; set; }
+        public IReportRepository ReportRepository { get; set; }
         public UnitOfWork(AppDbContext dbContext)
         {
             _dbContext = dbContext;
@@ -20,6 +21,7 @@ namespace Exam.App.Infrastructure
             PatientRepository = new PatientRepository(dbContext);
             VetRepository = new VetRepository(dbContext);
             AppointmentRepository = new AppointmentRepository(dbContext);
+            ReportRepository = new ReportRepository(dbContext);
 
         }
 

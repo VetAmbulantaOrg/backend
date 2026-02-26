@@ -15,6 +15,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<int>
     public DbSet<Patient> Patients { get; set; }
     public DbSet<Vet> Vets { get; set; }
     public DbSet<Appointment> Appointments { get; set; }
+    public DbSet<Report> Reports { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -57,6 +58,17 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<int>
 
         modelBuilder.Entity<Appointment>().HasOne(a => a.Patient).WithMany(p => p.Appointments).HasForeignKey(a => a.PatientId).OnDelete(DeleteBehavior.Cascade);
 
+        modelBuilder.Entity<Report>().HasKey(r => r.Id);
+
+        modelBuilder.Entity<Report>().Property(r => r.Weight).IsRequired();
+
+        modelBuilder.Entity<Report>().Property(r => r.Anamnesis).HasMaxLength(2000).IsRequired();
+
+        modelBuilder.Entity<Report>().Property(r => r.CreatedAt).IsRequired();
+
+        modelBuilder.Entity<Report>().Property(r => r.LastModifiedAt).IsRequired();
+
+        modelBuilder.Entity<Report>().HasOne(r => r.Appointment).WithOne(a => a.Report).HasForeignKey<Report>(r => r.AppointmentId).OnDelete(DeleteBehavior.Cascade);
 
     }
 }

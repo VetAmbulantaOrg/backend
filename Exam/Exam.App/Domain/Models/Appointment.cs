@@ -13,5 +13,6 @@ namespace Exam.App.Domain.Models
         public Vet Vet { get; set; }
         public int PatientId { get; set; }
         public Patient Patient { get; set; }
+        public Report Report { get; set; }
     }
 }

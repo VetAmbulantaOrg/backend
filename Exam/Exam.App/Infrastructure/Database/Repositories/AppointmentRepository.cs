@@ -22,11 +22,23 @@ namespace Exam.App.Infrastructure.Database.Repositories
                 .AsNoTracking()
                 .Include(a => a.Patient)
                 .Include(a => a.Patient.Species)
+                .Include(a => a.Report)
                 .Where(a => a.VetId == vetId
                             && a.StartAt >= from
                             && a.StartAt <= to)
                 .OrderBy(a => a.StartAt)
                 .ToListAsync();
+        }
+
+        public async Task<Appointment> GetOne(int id)
+        {
+            return await _dbContext.Appointments
+                .Include(a => a.Patient)
+                .Include(a => a.Patient.Species)
+                .Include(a => a.Report)
+                .Include(a => a.Vet)
+                .Where(a => a.Id == id)
+                .FirstOrDefaultAsync();
         }
 
         public async Task<bool> IsVetAvailableAsync(int vetId, DateTime startAt, int durationMinutes)

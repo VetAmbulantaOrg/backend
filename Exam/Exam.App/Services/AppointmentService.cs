@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Exam.App.Domain.Enum;
 using Exam.App.Domain.Interface;
 using Exam.App.Domain.Models;
 using Exam.App.Infrastructure;
@@ -7,6 +8,7 @@ using Exam.App.Infrastructure.Database.Repositories;
 using Exam.App.Services;
 using Exam.App.Services.Dtos.AppointmentDTOs.Request;
 using Exam.App.Services.Dtos.AppointmentDTOs.Response;
+using Exam.App.Services.Dtos.ReportDTO_s.Request;
 using Exam.App.Services.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
@@ -26,7 +28,7 @@ namespace Exam.App.Services
         public async Task<List<AppointmentsByDayDto>> GetAppointmentsByMonthAsync(AppointmentsByMonthRequestDto request)
         {
             var from = new DateTime(request.Year, request.Month, 1).ToUniversalTime();
-            var to = from.AddMonths(1).AddDays(-1);
+            var to = from.AddMonths(1);
 
             return await GetUpcomingAppointmentsGroupedByDayAsync(request.VetId, from, to);
         }
@@ -115,6 +117,77 @@ namespace Exam.App.Services
 
             return _mapper.Map<AppointmentSummaryDto>(appointment);
         }
+
+        public async Task<AppointmentSummaryDto> SubmitReportAsync(AppointmentReportDto dto)
+        {
+            var appointment = await _unitOfWork.AppointmentRepository.GetOneAsync(dto.AppointmentId);
+
+            if (appointment == null || appointment.VetId != dto.VetId)
+                throw new UnauthorizedAccessException("Pregled ne postoji ili nije vaš.");
+
+            var report = new Report
+            {
+                AppointmentId = appointment.Id,
+                Weight = dto.Weight,
+                Anamnesis = dto.Anamnesis,
+                CreatedAt = DateTime.UtcNow,
+                LastModifiedAt = DateTime.UtcNow
+            };
+
+            // Save the report (assuming a ReportRepository exists)
+            await _unitOfWork.ReportRepository.AddAsync(report);
+
+            appointment.Report = report;
+            appointment.Status = AppointmentStatus.Completed;
+
+             _unitOfWork.AppointmentRepository.Update(appointment);
+
+            await _unitOfWork.CompleteAsync();
+
+            return _mapper.Map<AppointmentSummaryDto>(appointment);
+        }
+
+
+        public async Task<AppointmentSummaryDto> UpdateReportAsync(AppointmentReportDto dto)
+        {
+            var appointment = await _unitOfWork.AppointmentRepository.GetOne(dto.AppointmentId);
+
+            if (appointment == null || appointment.VetId != dto.VetId)
+                throw new UnauthorizedAccessException("Pregled ne postoji ili nije vaš.");
+
+            // Provera roka od 3 radna dana
+            if (!CanModifyReport(appointment.Report.CreatedAt))
+                throw new InvalidOperationException("Izveštaj se više ne može menjati.");
+
+            appointment.Report.Weight = dto.Weight;
+            appointment.Report.Anamnesis = dto.Anamnesis;
+            appointment.Report.LastModifiedAt = DateTime.UtcNow;
+
+            _unitOfWork.ReportRepository.Update(appointment.Report);
+
+            await _unitOfWork.CompleteAsync();
+
+            return _mapper.Map<AppointmentSummaryDto>(appointment);
+        }
+
+
+        private bool CanModifyReport(DateTime createdAt)
+        {
+            var date = createdAt.Date;
+            int daysCount = 0;
+
+            while (daysCount < 3)
+            {
+                date = date.AddDays(1);
+                if (date.DayOfWeek != DayOfWeek.Saturday && date.DayOfWeek != DayOfWeek.Sunday)
+                {
+                    daysCount++;
+                }
+            }
+
+            return DateTime.UtcNow.Date <= date;
+        }
+
 
     }
 }

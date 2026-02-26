@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Exam.App.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260224162404_InitalCreate")]
-    partial class InitalCreate
+    [Migration("20260226182952_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -228,6 +228,39 @@ namespace Exam.App.Migrations
                     b.ToTable("Patients");
                 });
 
+            modelBuilder.Entity("Exam.App.Domain.Models.Report", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Anamnesis")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<int>("AppointmentId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("LastModifiedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<double>("Weight")
+                        .HasColumnType("double precision");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppointmentId")
+                        .IsUnique();
+
+                    b.ToTable("Reports");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<int>", b =>
                 {
                     b.Property<int>("Id")
@@ -432,6 +465,17 @@ namespace Exam.App.Migrations
                     b.Navigation("Vet");
                 });
 
+            modelBuilder.Entity("Exam.App.Domain.Models.Report", b =>
+                {
+                    b.HasOne("Exam.App.Domain.Models.Appointment", "Appointment")
+                        .WithOne("Report")
+                        .HasForeignKey("Exam.App.Domain.Models.Report", "AppointmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Appointment");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<int>", null)
@@ -480,6 +524,12 @@ namespace Exam.App.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Exam.App.Domain.Models.Appointment", b =>
+                {
+                    b.Navigation("Report")
                         .IsRequired();
                 });
 
