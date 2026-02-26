@@ -19,11 +19,11 @@ namespace Exam.App.Controllers
 
         // GET api/appointments/vet/{vetId}/monthly
         [Authorize(Roles = "Veterinar,Pomocnik")]
-        [HttpGet("vet/{vetId}/monthly")]
-        public async Task<IActionResult> GetMonthlyAppointments(int vetId)
+        [HttpPost("vet/{vetId}/monthly")]
+        public async Task<IActionResult> GetAppointmentsByMonth([FromBody] AppointmentsByMonthRequestDto request)
         {
-            var grouped = await _appointmentService.GetAppointmentsForCurrentMonthAsync(vetId);
-            return Ok(grouped);
+            var result = await _appointmentService.GetAppointmentsByMonthAsync(request);
+            return Ok(result);
         }
 
         // POST api/appointments

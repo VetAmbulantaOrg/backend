@@ -23,14 +23,14 @@ namespace Exam.App.Services
                 _mapper = mapper;
         }
 
-        public async Task<List<AppointmentsByDayDto>> GetAppointmentsForCurrentMonthAsync(int vetId)
+        public async Task<List<AppointmentsByDayDto>> GetAppointmentsByMonthAsync(AppointmentsByMonthRequestDto request)
         {
-            var today = DateTime.UtcNow.Date; // ili DateTime.Now ako radiš u lokalnom vremenu
-            var from = new DateTime(today.Year, today.Month, 1).ToUniversalTime();
+            var from = new DateTime(request.Year, request.Month, 1).ToUniversalTime();
             var to = from.AddMonths(1).AddDays(-1);
 
-            return await GetUpcomingAppointmentsGroupedByDayAsync(vetId, from, to);
+            return await GetUpcomingAppointmentsGroupedByDayAsync(request.VetId, from, to);
         }
+
 
 
         public async Task<List<AppointmentsByDayDto>> GetUpcomingAppointmentsGroupedByDayAsync(int vetId, DateTime from, DateTime to)

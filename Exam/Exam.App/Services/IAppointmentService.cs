@@ -6,7 +6,7 @@ namespace Exam.App.Services
     public interface IAppointmentService
     {
         Task<List<AppointmentsByDayDto>> GetUpcomingAppointmentsGroupedByDayAsync(int vetId, DateTime from, DateTime to);
-        Task<List<AppointmentsByDayDto>> GetAppointmentsForCurrentMonthAsync(int vetId);
+        Task<List<AppointmentsByDayDto>> GetAppointmentsByMonthAsync(AppointmentsByMonthRequestDto request);
         Task<AppointmentSummaryDto> CreateAppointmentAsync(CreateAppointmentDto dto);
         Task<AppointmentSummaryDto> CancelAppointmentAsync(CancelAppointmentDto dto);
     }
