@@ -1,0 +1,75 @@
+﻿using System.Security.Claims;
+using Application.Interface;
+using Exam.App.Services;
+using Exam.App.Services.Dtos.AppointmentDTOs.Request;
+using Exam.App.Services.Dtos.ReportDTO_s.Request;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Exam.App.Controllers
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class AppointmentsController : ControllerBase
+    {
+        private readonly IAppointmentService _appointmentService;
+
+        public AppointmentsController(IAppointmentService appointmentService)
+        {
+            _appointmentService = appointmentService;
+        }
+
+        // GET api/appointments/vet/{vetId}/monthly
+        [Authorize(Roles = "Veterinar,Pomocnik")]
+        [HttpPost("vet/{vetId}/monthly")]
+        public async Task<IActionResult> GetAppointmentsByMonth([FromBody] AppointmentsByMonthRequestDto request)
+        {
+            var result = await _appointmentService.GetAppointmentsByMonthAsync(request);
+            return Ok(result);
+        }
+
+        // POST api/appointments
+        [Authorize(Roles = "Veterinar,Pomocnik")]
+        [HttpPost]
+        public async Task<IActionResult> CreateAppointment([FromBody] CreateAppointmentDto dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            try
+            {
+                var created = await _appointmentService.CreateAppointmentAsync(dto);
+                return Ok(created);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new { message = ex.Message });
+            }
+        }
+
+        [Authorize(Roles = "Veterinar")]
+        [HttpPut("{id}/cancel")]
+        public async Task<IActionResult> Cancel([FromBody] CancelAppointmentDto dto)
+        {
+            var result = await _appointmentService.CancelAppointmentAsync(dto);
+            return Ok(result);
+        }
+
+        [Authorize(Roles = "Veterinar")]
+        [HttpPost("report")]
+        public async Task<IActionResult> CreateAppointmentReport([FromBody] AppointmentReportDto dto)
+        {
+            var result = await _appointmentService.SubmitReportAsync(dto);
+            return Ok(result);
+        }
+
+        [Authorize(Roles = "Veterinar")]
+        [HttpPut("report/update")]
+        public async Task<IActionResult> UpdateAppointmentReport([FromBody] AppointmentReportDto dto)
+        {
+            var result = await _appointmentService.UpdateReportAsync(dto);
+            return Ok(result);
+        }
+    }
+
+}
