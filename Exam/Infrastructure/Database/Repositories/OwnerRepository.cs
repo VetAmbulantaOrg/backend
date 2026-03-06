@@ -28,7 +28,7 @@ namespace Infrastructure.Database.Repositories
             var normalized = fullName.ToLower();
 
             return await _dbContext.Owners
-                .Where(o => (o.Name + " " + o.Surname).ToLower() == normalized)
+                .Where(o => (o.Name.Trim() + " " + o.Surname.Trim()).ToLower() == normalized)
                 .ToListAsync();
         }
 

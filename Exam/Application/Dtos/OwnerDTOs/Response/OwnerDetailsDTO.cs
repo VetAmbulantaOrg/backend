@@ -13,7 +13,7 @@ namespace Application.Dtos.OwnerDTOs.Response
         public string Name { get; set; }
         public string Surname { get; set; }
         public string Adress { get; set; }
-        public int PhoneNumber { get; set; }
+        public string PhoneNumber { get; set; }
         public ICollection<Patient> Pets { get; set; }
     }
 }
