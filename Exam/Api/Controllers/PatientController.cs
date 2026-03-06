@@ -55,7 +55,7 @@ namespace Exam.App.Controllers
         [Authorize(Roles = "Veterinar,Pomocnik")]
         [HttpPost]
 
-        public async Task<IActionResult> AddCage(PatientCreateRequestDto patientDto)
+        public async Task<IActionResult> AddPatient(PatientCreateRequestDto patientDto)
         {
             var result = await _patientService.AddAsync(patientDto);
             return Ok(result);
