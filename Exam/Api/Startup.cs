@@ -14,94 +14,150 @@ public static class Startup
 {
     public static void AddLogging(WebApplicationBuilder builder)
     {
-        var logger = new LoggerConfiguration()
-            .ReadFrom.Configuration(builder.Configuration)
-            .Enrich.FromLogContext()
-            .CreateLogger();
-        builder.Logging.ClearProviders();
-        builder.Logging.AddSerilog(logger);
+        Console.WriteLine("AddLogging: START");
+        try
+        {
+            var logger = new LoggerConfiguration()
+                .WriteTo.Console()
+                .CreateLogger();
+            builder.Logging.ClearProviders();
+            builder.Logging.AddSerilog(logger);
+            Console.WriteLine("AddLogging: SUCCESS");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"AddLogging: ERROR - {ex.Message}");
+            throw;
+        }
     }
 
     public static void AddCors(WebApplicationBuilder webApplicationBuilder)
     {
-        webApplicationBuilder.Services.AddCors(options =>
+        Console.WriteLine("AddCors: START");
+        try
         {
-            options.AddDefaultPolicy(
-                builder =>
-                {
-                    builder.WithOrigins("*").AllowAnyHeader().AllowAnyMethod();
-                });
-        });
+            webApplicationBuilder.Services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(
+                    builder =>
+                    {
+                        builder.WithOrigins("*").AllowAnyHeader().AllowAnyMethod();
+                    });
+            });
+            Console.WriteLine("AddCors: SUCCESS");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"AddCors: ERROR - {ex.Message}");
+            throw;
+        }
     }
 
     public static void AddSwagger(WebApplicationBuilder builder)
     {
-        builder.Services.AddSwaggerGen(c =>
+        Console.WriteLine("AddSwagger: START");
+        try
         {
-            c.SwaggerDoc("v1", new OpenApiInfo { Title = "Building Example API", Version = "v1" });
-
-            c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            builder.Services.AddSwaggerGen(c =>
             {
-                Name = "Authorization",
-                Type = SecuritySchemeType.Http,
-                Scheme = "bearer",
-                BearerFormat = "JWT",
-                In = ParameterLocation.Header,
-                Description = "Insert JWT token"
-            });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Building Example API", Version = "v1" });
 
-            c.AddSecurityRequirement(new OpenApiSecurityRequirement
-        {
-            {
-                new OpenApiSecurityScheme
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
-                    Reference = new OpenApiReference
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "bearer",
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                    Description = "Insert JWT token"
+                });
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
                     {
-                        Type = ReferenceType.SecurityScheme,
-                        Id = "Bearer"
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        []
                     }
-                },
-                []
-            }
-        });
-        });
+                });
+            });
+            Console.WriteLine("AddSwagger: SUCCESS");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"AddSwagger: ERROR - {ex.Message}");
+            throw;
+        }
     }
 
     public static void AddAuthenticationAndAuthorization(WebApplicationBuilder builder)
     {
-        builder.Services.AddIdentity<ApplicationUser, IdentityRole<int>>()
-             .AddEntityFrameworkStores<AppDbContext>()
-             .AddDefaultTokenProviders();
-
-        builder.Services.Configure<IdentityOptions>(options =>
+        Console.WriteLine("AddAuthenticationAndAuthorization: START");
+        try
         {
-            options.Password.RequireDigit = true;
-            options.Password.RequireLowercase = true;
-            options.Password.RequireUppercase = true;
-            options.Password.RequireNonAlphanumeric = true;
-            options.Password.RequiredLength = 8;
-        });
+            Console.WriteLine("AddAuthenticationAndAuthorization: Adding Identity...");
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole<int>>()
+                 .AddEntityFrameworkStores<AppDbContext>()
+                 .AddDefaultTokenProviders();
+            Console.WriteLine("AddAuthenticationAndAuthorization: Identity added");
 
-        builder.Services.AddAuthentication(options =>
-        {
-            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        })
-            .AddJwtBearer(options =>
+            Console.WriteLine("AddAuthenticationAndAuthorization: Configuring password...");
+            builder.Services.Configure<IdentityOptions>(options =>
             {
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ClockSkew = TimeSpan.Zero,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = builder.Configuration["Jwt:Issuer"],
-                    ValidAudience = builder.Configuration["Jwt:Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
-                    RoleClaimType = ClaimTypes.Role
-                };
+                options.Password.RequireDigit = true;
+                options.Password.RequireLowercase = true;
+                options.Password.RequireUppercase = true;
+                options.Password.RequireNonAlphanumeric = true;
+                options.Password.RequiredLength = 8;
             });
-        builder.Services.AddAuthorization();
+            Console.WriteLine("AddAuthenticationAndAuthorization: Password configured");
+
+            Console.WriteLine("AddAuthenticationAndAuthorization: Adding Authentication...");
+            var jwtKey = builder.Configuration["Jwt:Key"];
+            var jwtIssuer = builder.Configuration["Jwt:Issuer"];
+            var jwtAudience = builder.Configuration["Jwt:Audience"];
+
+            Console.WriteLine($"JWT Key present: {!string.IsNullOrEmpty(jwtKey)}");
+            Console.WriteLine($"JWT Issuer: {jwtIssuer}");
+            Console.WriteLine($"JWT Audience: {jwtAudience}");
+
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ClockSkew = TimeSpan.Zero,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = jwtIssuer,
+                        ValidAudience = jwtAudience,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
+                        RoleClaimType = ClaimTypes.Role
+                    };
+                });
+            Console.WriteLine("AddAuthenticationAndAuthorization: Authentication added");
+
+            Console.WriteLine("AddAuthenticationAndAuthorization: Adding Authorization...");
+            builder.Services.AddAuthorization();
+            Console.WriteLine("AddAuthenticationAndAuthorization: SUCCESS");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"AddAuthenticationAndAuthorization: ERROR - {ex.Message}");
+            Console.WriteLine($"Stack: {ex.StackTrace}");
+            throw;
+        }
     }
 }
