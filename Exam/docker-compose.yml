@@ -18,9 +18,10 @@ services:
       retries: 5
     networks:
       - veterina-net
+    restart: unless-stopped
 
   api:
-    build: .
+    image: mirkozec/myapps:veterina-api-latest
     container_name: exam-api
     ports:
       - "5231:5231"
@@ -28,12 +29,14 @@ services:
       postgres:
         condition: service_healthy
     environment:
+      - ASPNETCORE_ENVIRONMENT=Production
       - ConnectionStrings__DefaultConnection=Server=postgres;Port=5432;Database=VetStationDb;User Id=postgres;Password=root;
     networks:
       - veterina-net
+    restart: unless-stopped
 
   frontend:
-    build: ../../../React/Veterina
+    image: mirkozec/myapps:veterina-frontend-latest
     container_name: veterina-frontend
     ports:
       - "3000:3000"
@@ -41,6 +44,16 @@ services:
       - api
     networks:
       - veterina-net
+    restart: unless-stopped
+
+  portfolio:
+    image: mirkozec/myapps:portfolio-latest
+    container_name: my-portfolio
+    ports:
+      - "3001:3001"
+    networks:
+      - veterina-net
+    restart: unless-stopped
 
   pgadmin:
     image: dpage/pgadmin4
@@ -54,6 +67,7 @@ services:
       - postgres
     networks:
       - veterina-net
+    restart: unless-stopped
 
 volumes:
   veterina-data:
