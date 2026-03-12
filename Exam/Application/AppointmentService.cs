@@ -93,7 +93,7 @@ namespace Exam.App.Services
 
         public async Task<AppointmentSummaryDto> CancelAppointmentAsync(CancelAppointmentDto dto)
         {
-            var appointment = await _unitOfWork.AppointmentRepository.GetOneAsync(dto.VetId);
+            var appointment = await _unitOfWork.AppointmentRepository.GetOne(dto.AppointmentId);
             if (appointment == null)
             {
                 throw new NotFoundException(dto.VetId);
