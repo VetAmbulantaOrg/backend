@@ -96,7 +96,7 @@ namespace Exam.App.Services
             var appointment = await _unitOfWork.AppointmentRepository.GetOne(dto.AppointmentId);
             if (appointment == null)
             {
-                throw new NotFoundException(dto.VetId);
+                throw new NotFoundException(dto.AppointmentId);
             }
 
             if (appointment.VetId != dto.VetId)
