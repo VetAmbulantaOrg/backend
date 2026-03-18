@@ -25,6 +25,9 @@ namespace Exam.App.Infrastructure.Database.Repositories
                 .Include(p => p.Vet)
                 .AsQueryable();
 
+            if (filter.VetId.HasValue)
+                query = query.Where(p => p.VetId == filter.VetId.Value);
+
             if (!string.IsNullOrWhiteSpace(filter.FullNameVet))
             {
                 var fullNameVet = filter.FullNameVet.ToLower();
@@ -102,7 +105,7 @@ namespace Exam.App.Infrastructure.Database.Repositories
         }
 
         public async Task<List<Patient>> GetByVet(int VetId)
-        {
+          {
             return await _dbContext.Patients
                 .Include(p => p.Species)
                 .Include(p => p.Owner)

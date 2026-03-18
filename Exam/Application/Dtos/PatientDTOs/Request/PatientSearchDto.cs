@@ -2,6 +2,7 @@
 {
     public class PatientSearchDto
     {
+        public int? VetId { get; set; }
         public string? FullNameVet { get; set; }
         public string? PetName { get; set; }
         public string? Species { get; set; }

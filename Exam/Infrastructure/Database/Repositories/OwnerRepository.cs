@@ -25,10 +25,12 @@ namespace Infrastructure.Database.Repositories
 
         public async Task<List<Owner>> GetByFullName(string fullName)
         {
-            var normalized = fullName.ToLower();
+            var normalized = string.Join(" ", fullName.Split(' ', StringSplitOptions.RemoveEmptyEntries)).ToLower();
 
             return await _dbContext.Owners
-                .Where(o => (o.Name.Trim() + " " + o.Surname.Trim()).ToLower() == normalized)
+                .Where(o => EF.Functions.Like(
+                    (o.Name.Trim() + " " + o.Surname.Trim()).ToLower(),
+                    $"%{normalized}%"))
                 .ToListAsync();
         }
 
